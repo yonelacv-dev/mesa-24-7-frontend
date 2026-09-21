@@ -1,8 +1,14 @@
+import path from 'node:path'
+
 import { defineConfig, devices } from '@playwright/test'
 
 const BACKEND_PORT = 8001
 const FRONTEND_PORT = 5174
-const BACKEND_DIR = new URL('../backend', import.meta.url).pathname
+// Backend y frontend son repos separados: por defecto se asume una carpeta hermana llamada "backend"
+// (como en este checkout). Si el tuyo se llama distinto o está en otro lado, pon BACKEND_DIR=/ruta.
+const BACKEND_DIR = process.env.BACKEND_DIR
+  ? path.resolve(process.env.BACKEND_DIR)
+  : new URL('../backend', import.meta.url).pathname
 
 export default defineConfig({
   testDir: './e2e',

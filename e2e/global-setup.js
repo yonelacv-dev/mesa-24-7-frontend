@@ -10,7 +10,11 @@ import path from 'node:path'
 
 export const E2E_DB = 'waiting_list_e2e'
 export const E2E_PASSWORD = 'e2e-password'
-export const BACKEND_DIR = path.resolve(import.meta.dirname, '../../backend')
+// Backend y frontend son repos separados: por defecto se asume una carpeta hermana llamada "backend"
+// (como en este checkout). Si el tuyo se llama distinto o está en otro lado, pon BACKEND_DIR=/ruta.
+export const BACKEND_DIR = process.env.BACKEND_DIR
+  ? path.resolve(process.env.BACKEND_DIR)
+  : path.resolve(import.meta.dirname, '../../backend')
 
 const baseEnv = { ...process.env, MYSQL_DATABASE: E2E_DB }
 

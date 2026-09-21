@@ -8,8 +8,9 @@ Vitest. JavaScript.
 
 ## Levantarlo en 5 minutos
 
-**Requisitos:** Node 22.12 o superior (24 o 26 también sirven) y el **backend corriendo** en el puerto 8000
-(ver [`../backend/README.md`](../backend/README.md), pasos 1 a 4).
+**Requisitos:** Node 22.12 o superior (24 o 26 también sirven) y el **backend corriendo** en el puerto 8000.
+Es un repo aparte: [mesa-24-7-backend](https://github.com/yonelacv-dev/mesa-24-7-backend) — clónalo y sigue
+su propio README (`poetry install`, `./scripts/setup_demo_data.sh --demo-queue`, `poetry run uvicorn ...`).
 
 ```bash
 cd frontend
@@ -32,7 +33,8 @@ Abre <http://localhost:5173>. En desarrollo el front llama a `/api` en su propio
 **Para probar el flujo completo** abre dos pestañas o un celular y una tablet:
 
 1. En la tablet: entra a `/host`, inicia sesión con el usuario del local (`terraza-azul`, `cuatro-vientos` o
-   `casa-mediterranea`; la contraseña la imprimió el seed del back).
+   `casa-mediterranea`) y la contraseña `demo1234` (fija por defecto; distinta solo si el back se sembró
+   con `SEED_PASSWORD` en otro valor).
 2. En el celular: entra a `/diner` y únete. Verás tu puesto y tu ticket.
 3. En la tablet aparece la fila al instante. Toca **Llamar**: el celular cambia a "Tu mesa está lista" con la cuenta
    regresiva de 10 minutos.
@@ -95,7 +97,7 @@ build con nginx, que además reenvía `/api` al contenedor del backend por una r
 
 ```bash
 docker network create waitlist-net   # una sola vez, si no existe ya (o créala al levantar el backend)
-docker compose up -d --build         # requiere el backend ya levantado (ver backend/README.md#docker)
+docker compose up -d --build         # requiere el backend ya levantado (repo mesa-24-7-backend, sección Docker de su README)
 ```
 
 - Se sirve en `http://<tu-servidor>:8080` por defecto — no en el 80, porque un servidor de pruebas suele
@@ -120,11 +122,15 @@ npx playwright install chromium   # solo la primera vez
 npm run e2e
 ```
 
-Requisitos: MySQL corriendo en local (con usuario `root` sin contraseña, igual que el resto del proyecto) y
-Poetry ya instalado en `../backend` (`poetry install`, ver el README del backend). No hace falta tener el back ni el
-front arrancados a mano: Playwright levanta su **propia** copia de ambos (puertos 8001 y 5174, distintos de los de
-desarrollo) contra una base de datos propia, `waiting_list_e2e`, que recrea desde cero en cada corrida — nunca toca
-`waiting_list`.
+Requisitos: MySQL corriendo en local (con usuario `root` sin contraseña, igual que el resto del proyecto) y el
+repo [mesa-24-7-backend](https://github.com/yonelacv-dev/mesa-24-7-backend) clonado, con `poetry install` ya
+corrido ahí. Por defecto se asume una carpeta **hermana** de esta llamada `backend` (`git clone` ese repo
+como `backend` justo al lado de `frontend/`); si lo tienes en otro lado o con otro nombre:
+`BACKEND_DIR=/ruta/a/mesa-24-7-backend npm run e2e`.
+
+No hace falta tener el back ni el front arrancados a mano: Playwright levanta su **propia** copia de ambos
+(puertos 8001 y 5174, distintos de los de desarrollo) contra una base de datos propia, `waiting_list_e2e`,
+que recrea desde cero en cada corrida — nunca toca `waiting_list`.
 
 Corre el flujo completo contra el back real (sin mocks): unirse, ser llamado, sentarse, cancelar, "Voy en camino",
 recuperar el turno con ticket y teléfono, un teléfono con una sola entrada activa, las acciones del anfitrión con su
