@@ -4,7 +4,7 @@ Las tres pantallas del producto: **Unirse** y **Tu turno** (comensal, en el celu
 tablet). Se actualizan en vivo sin recargar.
 
 **Stack:** React 19 · Vite · Tailwind CSS v4 · shadcn/ui · TanStack Query · React Router · react-hook-form + zod ·
-Vitest. JavaScript.
+Vitest · **TypeScript** (modo estricto).
 
 ## Levantarlo en 5 minutos
 
@@ -49,9 +49,11 @@ Para probar desde un celular real en la misma red: `npm run dev -- --host` y abr
 | Comando | Qué hace |
 |---|---|
 | `npm run dev` | Servidor de desarrollo con recarga en caliente |
-| `npm run build` | Build de producción en `dist/` (cada página se carga bajo demanda) |
+| `npm run build` | Verifica los tipos (`tsc`) y genera el build de producción en `dist/` (cada página se carga bajo demanda) |
 | `npm run preview` | Sirve el build para revisarlo |
 | `npm test` | Tests unitarios y de arquitectura (`npm run test:watch` para modo interactivo) |
+| `npm run typecheck` | Solo verifica los tipos, sin compilar |
+| `npm run gen:api` | Regenera los tipos de la API desde el OpenAPI del back (necesita el back corriendo en el puerto 8000) |
 | `npm run lint` | Lint con oxlint |
 | `npm run e2e` | Pruebas de punta a punta con Playwright (ver abajo) |
 | `npm run e2e:ui` | Igual, con la interfaz visual de Playwright para depurar |
@@ -154,18 +156,31 @@ src/
 │   ├── hooks/        casos de uso de la interfaz: TanStack Query + tiempo real
 │   ├── components/   presentacionales: reciben props y emiten eventos
 │   ├── pages/        componen hooks y componentes; una por ruta
-│   └── index.js      API pública del módulo (no exporta páginas)
+│   └── index.ts      API pública del módulo (no exporta páginas)
 ├── components/ui/    componentes base de shadcn/ui
-├── shared/           componentes, hooks, utilidades y constantes propios reutilizables
-├── services/         cliente HTTP global (api.js) y SSE (sse.js)
-├── router/ · lib/ · App.jsx · main.jsx
+├── shared/           componentes, hooks, utilidades, constantes y tipos propios reutilizables
+│   └── types/        tipos del dominio; api.generated.ts sale del OpenAPI del back (no se edita)
+├── services/         cliente HTTP global (api.ts) y SSE (sse.ts)
+├── router/ · lib/ · App.tsx · main.tsx
 ```
 
 Los componentes van en tres niveles: `components/ui` (base) → `shared/components` (reutilizables propios) →
 `modules/*/components` (específicos del negocio).
 
-`src/architecture.test.js` **hace cumplir** las capas: `domain` no importa React, `components` no llaman a servicios
-ni a hooks de datos, un módulo entra a otro solo por su `index.js`, y las páginas no se exportan en él.
+`src/architecture.test.ts` **hace cumplir** las capas: `domain` no importa React, `components` no llaman a servicios
+ni a hooks de datos, un módulo entra a otro solo por su `index.ts`, y las páginas no se exportan en él.
+
+### Tipos
+
+- **Los tipos de la API no se escriben a mano:** `src/shared/types/api.generated.ts` se genera desde el OpenAPI del back con
+  `npm run gen:api`. Cuando cambie un endpoint o un esquema del back, se vuelve a correr y el compilador señala lo que
+  dejó de cuadrar.
+- `src/shared/types/index.ts` da nombres al dominio (`Entry`, `HostQueue`, `HostRow`...) y acota lo que el back declara como
+  `str` a las uniones reales (`EntryStatus`, `ListKind`...).
+- Todos los errores de consultas y mutaciones son `ApiError` (declarado una vez en `src/services/react-query.d.ts`), así que
+  `error.status` y `error.code` están tipados.
+- El único punto sin verificación en compilación es el JSON que llega por red (SSE y HTTP): ahí hay una aserción, en
+  `services/sse.ts` y `services/api.ts`.
 
 ### Decisiones que conviene conocer
 
