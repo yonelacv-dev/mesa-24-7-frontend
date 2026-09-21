@@ -1,0 +1,206 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/*
+ * Tokens de color: cada uno es un triplete HSL para que el tema claro y el oscuro cambien solo aquí.
+ * Portados del prototipo. Los componentes de shadcn/ui los leen con nombres estándar (primary, card...).
+ */
+:root {
+  --page: 220 12% 93%;
+  --background: 220 14% 97%;
+  --foreground: 0 0% 9%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 9%;
+  --primary: 13 100% 43%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 14% 92%;
+  --secondary-foreground: 0 0% 9%;
+  --muted: 220 14% 94%;
+  --muted-foreground: 220 8% 38%;
+  --accent: 14 100% 96%;
+  --accent-foreground: 13 100% 26%;
+  --destructive: 348 78% 40%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 152 60% 26%;
+  --success-soft: 150 45% 91%;
+  --warning: 30 100% 26%;
+  --warning-soft: 48 100% 88%;
+  --border: 220 13% 88%;
+  --input: 220 10% 72%;
+  --ring: 13 100% 45%;
+  --ink: 0 0% 9%;
+  --ink-foreground: 0 0% 100%;
+  --ink-muted: 0 0% 72%;
+  --num-from: 13 100% 43%;
+  --num-to: 22 90% 50%;
+  --radius: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: 240 6% 5%;
+    --background: 240 6% 8%;
+    --foreground: 0 0% 96%;
+    --card: 240 5% 12%;
+    --card-foreground: 0 0% 96%;
+    --popover: 240 5% 12%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 14 100% 60%;
+    --primary-foreground: 0 0% 8%;
+    --secondary: 240 5% 18%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 240 5% 15%;
+    --muted-foreground: 220 6% 68%;
+    --accent: 14 55% 18%;
+    --accent-foreground: 14 100% 86%;
+    --destructive: 350 80% 60%;
+    --destructive-foreground: 0 0% 8%;
+    --success: 150 55% 62%;
+    --success-soft: 152 35% 15%;
+    --warning: 46 100% 65%;
+    --warning-soft: 40 40% 15%;
+    --border: 240 5% 20%;
+    --input: 240 5% 32%;
+    --ring: 14 100% 60%;
+    --ink: 240 6% 17%;
+    --ink-foreground: 0 0% 98%;
+    --ink-muted: 240 5% 72%;
+    --num-from: 14 100% 62%;
+    --num-to: 34 100% 62%;
+  }
+}
+
+@theme inline {
+  --font-sans: 'Nunito Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --color-page: hsl(var(--page));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-soft: hsl(var(--success-soft));
+  --color-warning: hsl(var(--warning));
+  --color-warning-soft: hsl(var(--warning-soft));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-ink: hsl(var(--ink));
+  --color-ink-foreground: hsl(var(--ink-foreground));
+  --color-ink-muted: hsl(var(--ink-muted));
+
+  /* Colores del logo mesa 24/7 */
+  --color-brand-flame: #f03808;
+  --color-brand-orange: #f08800;
+  --color-brand-sun: #e8c800;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: hsl(var(--page));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    /* Notch y barra del sistema: el contenido no queda tapado en ninguna orientación. */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+      env(safe-area-inset-left);
+  }
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+}
+
+/* El número grande (puesto, ticket) escala con el ancho disponible: nunca desborda en pantallas estrechas. */
+@utility num-gradient {
+  background: linear-gradient(180deg, hsl(var(--num-from)), hsl(var(--num-to)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes pos-in {
+  from {
+    transform: translateY(-45%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes arc-pulse {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes row-flash {
+  from {
+    background-color: hsl(var(--accent));
+  }
+  to {
+    background-color: transparent;
+  }
+}
+@keyframes live {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@utility animate-pos-in {
+  animation: pos-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@utility animate-row-flash {
+  animation: row-flash 1.8s ease-out;
+}
+@utility animate-live {
+  animation: live 2.4s ease-in-out infinite;
+}
+.arc-pulse .arc {
+  animation: arc-pulse 0.7s ease-out both;
+  animation-delay: calc(var(--i) * 120ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pos-in,
+  .animate-row-flash,
+  .animate-live,
+  .arc-pulse .arc {
+    animation: none;
+  }
+}

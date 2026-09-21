@@ -1,0 +1,21 @@
+# Servidor de pruebas. Se conecta al backend por la red compartida "waitlist-net"
+# (creada una vez, y a la que backend/docker-compose.yml también se une):
+#
+#   docker network create waitlist-net    # una sola vez, si no existe ya
+#   # levantar primero backend/docker-compose.yml, luego este
+#   docker compose up -d --build
+#
+# WEB_PORT: puerto publicado en el host (por defecto 80).
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-80}:80"
+    networks:
+      - waitlist-net
+
+networks:
+  waitlist-net:
+    name: ${WAITLIST_NETWORK:-waitlist-net}
+    external: true
