@@ -98,7 +98,10 @@ docker network create waitlist-net   # una sola vez, si no existe ya (o créala 
 docker compose up -d --build         # requiere el backend ya levantado (ver backend/README.md#docker)
 ```
 
-- Se sirve en `http://<tu-servidor>` (puerto 80; con `WEB_PORT` en un `.env` se cambia).
+- Se sirve en `http://<tu-servidor>:8080` por defecto — no en el 80, porque un servidor de pruebas suele
+  tener ya algo propio ahí (tu nginx, otro proyecto). Si el 80 está libre y quieres usarlo directo, pon
+  `WEB_PORT=80` en un `.env`. Si no, deja el 8080 y pon tu propio nginx/apache al frente apuntando a él
+  (`proxy_pass http://127.0.0.1:8080;`), con `proxy_buffering off` para no cortar los streams en vivo.
 - `VITE_API_URL` no se usa aquí: el build de producción llama a `/api` en su propio origen (nginx lo
   reenvía), así que no hace falta ninguna variable al construir la imagen.
 - `nginx.conf` es quien resuelve el nombre `api` (el servicio del backend) dentro de `waitlist-net`, y

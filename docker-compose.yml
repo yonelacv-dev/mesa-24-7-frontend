@@ -5,13 +5,15 @@
 #   # levantar primero backend/docker-compose.yml, luego este
 #   docker compose up -d --build
 #
-# WEB_PORT: puerto publicado en el host (por defecto 80).
+# WEB_PORT: puerto publicado en el host (por defecto 8080, no 80: un servidor de pruebas suele ya
+# tener algo propio escuchando en el 80/443 — este contenedor no debe asumir que está libre).
+# Si tienes tu propio nginx/apache al frente, apúntalo a este puerto; si no, pon WEB_PORT=80 tú mismo.
 services:
   web:
     build: .
     restart: unless-stopped
     ports:
-      - "${WEB_PORT:-80}:80"
+      - "${WEB_PORT:-8080}:80"
     networks:
       - waitlist-net
 
